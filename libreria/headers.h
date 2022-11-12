@@ -50,3 +50,17 @@ struct patient
 };
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
+bool createFiled(patient aux, int cont);
+time_t fromStringtoTimet(string aux);
+time_t LastConsult(consults* list_consults, int Nconsults, patient aux, bool* asistencia);
+void search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts);
+bool addInsurance(insurance*& list_insurances, int* Ninsurances, insurance aux);
+bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances);
+bool addDoctor(doctor*& list_doctors, int* Ndoctors, doctor aux);
+bool readDoctor(string name, doctor*& list_doctors, int* Ndoctors);
+bool addConsult(consults*& list_consults, int* Nconsults, consults aux);
+bool readConsults(string name, consults*& list_consults, int* Nconsults);
+bool addContact(contacts*& list_contacts, int* Ncontacts, contacts aux);
+bool readContact(string name, contacts*& list_contacts, int* Ncontacts);
+bool addPatient(patient*& list_patient, int* Npatient, patient aux);
+bool readpatient(string name, patient*& list_patient, int* Npatient);
