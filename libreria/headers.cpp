@@ -1,28 +1,28 @@
 #include "headers.h"
 
-using namespace std;
 
-
-bool readpatient(string name, patient*& list_patient, int* Npatient)
+bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion para leer el csv
 {
-	if (list_patient == nullptr)
+	if (list_patient == nullptr)	//si no tiene asinado espacio en memoria, error
 		return false;
+
 	fstream file;
-	file.open(name, ios::in);
-	if (!(file.is_open())) {
-		cout << "no se abrió" << endl;
+	file.open(name, ios::in);	//abro el archivo para leerlo
+
+	if (!(file.is_open()))	//no se pudo abrir el archivo
 		return false;
-	}
-	cout << "si";
+
 	char coma;
-	patient headers;
-	file >> headers.ID >> coma >> headers.name >> coma >> headers.surname >> coma >> headers.sex >> coma >> headers.birth;
+	patient aux;
+	string dummy;
+
+	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;	//levanto los headers
+
 	while (file)
 	{
-		patient aux;
-		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.sex >> coma >> aux.birth;
+		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.sex >> coma >> aux.birth >> coma >> aux.state >> coma >> aux.ID_insurance;
 		bool added = addPatient(list_patient, Npatient, aux);
-		if (added == false)
+		if (added == false)	//hubo algun error al agregar el paciente
 			return false;
 	}
 	file.close();
@@ -30,18 +30,23 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)
 }
 bool addPatient(patient*& list_patient, int* Npatient, patient aux)
 {
-	if (list_patient == nullptr)//ES ESTO NECESARIO???????(YA LO CHEQUEE EN FUNC ANTERIOR
+	if (list_patient == nullptr)	//rechequeo por las dudas que lo que me pasen tenog  espacio asignado
 		return false;
+
 	*Npatient = *Npatient + 1;
 	patient* changed = new patient[*Npatient];
-	int i;
-	for (i = 0; i < *Npatient - 1; i++)
-		changed[i] = list_patient[i];
+	int i=0;
 
+	while (i < *Npatient - 1 && *Npatient - 1 != 0)
+	{
+		changed[i] = list_patient[i];
+		i++;
+	}
 	changed[i] = aux;
-	delete[]list_patient;
-	list_patient = changed;
-	return true;
+
+	delete[]list_patient;	//borro a donde estaba apuntado
+	list_patient = changed;	//redireciono
+	return true;	//todo ok
 }
 
 bool readContact(string name, contacts*& list_contacts, int* Ncontacts)
@@ -53,11 +58,11 @@ bool readContact(string name, contacts*& list_contacts, int* Ncontacts)
 	if (!(file.is_open()))
 		return false;
 	char coma;
-	contacts headers;
-	file >> headers.ID >> coma >> headers.telephone >> coma >> headers.celphone >> coma >> headers.mail;
+	contacts aux;
+	string dummy;
+	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
 	while (file)
 	{
-		contacts aux;
 		file >> aux.ID >> coma >> aux.telephone >> coma >> aux.celphone >> coma >> aux.mail;
 		bool added = addContact(list_contacts, Ncontacts, aux);
 		if (added == false)
@@ -68,14 +73,16 @@ bool readContact(string name, contacts*& list_contacts, int* Ncontacts)
 }
 bool addContact(contacts*& list_contacts, int* Ncontacts, contacts aux)
 {
-	if (list_contacts == nullptr || Ncontacts == nullptr)
+	if (list_contacts == nullptr)
 		return false;
 	*Ncontacts = *Ncontacts + 1;
 	contacts* changed = new contacts[*Ncontacts];
-	int i;
-	for (i = 0; i < *Ncontacts - 1; i++)
+	int i=0;
+	while (i < *Ncontacts - 1 && *Ncontacts - 1 != 0)
+	{
 		changed[i] = list_contacts[i];
-
+		i++;
+	}
 	changed[i] = aux;
 	delete[]list_contacts;
 	list_contacts = changed;
@@ -84,18 +91,18 @@ bool addContact(contacts*& list_contacts, int* Ncontacts, contacts aux)
 
 bool readConsults(string name, consults*& list_consults, int* Nconsults) 
 {
-	if (list_consults == nullptr || Nconsults == nullptr)
+	if (list_consults == nullptr)
 		return false;
 	fstream file;
 	file.open(name, ios::in);
 	if (!(file.is_open()))
 		return false;
 	char coma;
-	consults headers;
-	file >> headers.ID >> coma >> headers.required >> coma >> headers.appointment >> coma >> headers.attendance >> coma >> headers.doctors_ID;
+	consults aux;
+	string dummy;
+	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
 	while (file)
 	{
-		consults aux;
 		file >> aux.ID >> coma >> aux.required >> coma >> aux.appointment>> coma >> aux.attendance >> coma >> aux.doctors_ID;
 		bool added = addConsult(list_consults, Nconsults, aux);
 		if (added == false)
@@ -106,14 +113,17 @@ bool readConsults(string name, consults*& list_consults, int* Nconsults)
 }
 bool addConsult(consults*& list_consults, int* Nconsults, consults aux)
 {
-	if (list_consults == nullptr || Nconsults == nullptr)
+	if (list_consults == nullptr)
 		return false;
 	*Nconsults = *Nconsults + 1;
 	consults* changed = new consults[*Nconsults];
-	int i;
-	for (i = 0; i < *Nconsults - 1; i++)
+	int i=0;
+	while (i < *Nconsults - 1 && *Nconsults - 1 != 0)
+	{
 		changed[i] = list_consults[i];
-
+		i++;
+	}
+		
 	changed[i] = aux;
 	delete[]list_consults;
 	list_consults = changed;
@@ -122,18 +132,18 @@ bool addConsult(consults*& list_consults, int* Nconsults, consults aux)
 
 bool readDoctor(string name, doctor*& list_doctors, int* Ndoctors)
 {
-	if (list_doctors == nullptr || Ndoctors == nullptr)
+	if (list_doctors == nullptr)
 		return false;
 	fstream file;
 	file.open(name, ios::in);
 	if (!(file.is_open()))
 		return false;
 	char coma;
-	doctor headers;
-	file >> headers.ID >> coma >> headers.name >> coma >> headers.surname >> coma >> headers.telephone >> coma >> headers.speciality >> coma >> headers.state;
+	doctor aux;
+	string dummy; 
+	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
 	while (file)
 	{
-		doctor aux;
 		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.telephone >> coma >> aux.speciality >> coma >> aux.state;;
 		bool added = addDoctor(list_doctors, Ndoctors, aux);
 		if (added == false)
@@ -144,14 +154,16 @@ bool readDoctor(string name, doctor*& list_doctors, int* Ndoctors)
 }
 bool addDoctor(doctor*& list_doctors, int* Ndoctors, doctor aux)
 {
-	if (list_doctors == nullptr || Ndoctors == nullptr)
+	if (list_doctors == nullptr)
 		return false;
 	*Ndoctors = *Ndoctors + 1;
 	doctor* changed = new doctor[*Ndoctors];
-	int i;
-	for (i = 0; i < *Ndoctors - 1; i++)
+	int i=0;
+	while (i < *Ndoctors - 1 && *Ndoctors - 1 != 0)
+	{
 		changed[i] = list_doctors[i];
-
+		i++;
+	}
 	changed[i] = aux;
 	delete[]list_doctors;
 	list_doctors = changed;
@@ -171,11 +183,11 @@ bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances)
 	string insurance_name;
 
 	char coma;
-	insurance headers;
-	file >> headers.ID >> coma >> headers.insurance_name;
+	insurance aux;
+	string dummy;
+	file >> dummy >> coma >> dummy;
 	while (file)
 	{
-		insurance aux;
 		file >> aux.ID >> coma >> aux.insurance_name;
 		bool added = addInsurance(list_insurances, Ninsurances, aux);
 		if (added == false)
@@ -186,26 +198,30 @@ bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances)
 }
 bool addInsurance(insurance*& list_insurances, int* Ninsurances, insurance aux)
 {
-	if (list_insurances == nullptr || Ninsurances == nullptr)
+	if (list_insurances == nullptr)
 		return false;
 	*Ninsurances = *Ninsurances + 1;
 	insurance* changed = new insurance[*Ninsurances];
-	int i;
-	for (i = 0; i < *Ninsurances - 1; i++)
+	int i=0;
+	while (i < *Ninsurances - 1 && *Ninsurances - 1 != 0)
+	{
 		changed[i] = list_insurances[i];
-
+		i++;
+	}
 	changed[i] = aux;
 	delete[]list_insurances;
 	list_insurances = changed;
 	return true;
 }
 
-void search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts)
+bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts)
 {
+	if (list_patient == nullptr || list_consults == nullptr || list_contacts == nullptr)
+		return false;
 	int i, j;
 	i = j = 0;
 	int contfilled = 0;
-	bool date;
+	//bool date;
 	int tenyears = 315576000;
 	time_t checkTime;
 	//busco el tiempo actual
@@ -247,9 +263,11 @@ void search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 }
 time_t LastConsult(consults* list_consults, int Nconsults, patient aux,bool*asistencia)	//fncón para buscar la ultima ocnsulta
 {
+	if (Nconsults<=0|| list_consults == nullptr)
+		return NULL;
 	int j = 0;
 	int cont = 0;
-	time_t ultima;
+	time_t ultima=0;
 	time_t auxConsult;
 	while (j < Nconsults) //para buscar la ultima consulta para dsp poder comparar si pasaron 10 años
 	{
