@@ -23,7 +23,11 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.sex >> coma >> aux.birth >> coma >> aux.state >> coma >> aux.ID_insurance;
 		bool added = addPatient(list_patient, Npatient, aux);
 		if (added == false)	//hubo algun error al agregar el paciente
+		{
 			return false;
+			cout << "Error";
+		}
+			
 	}
 	file.close();
 	return true;
