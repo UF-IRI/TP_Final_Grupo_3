@@ -38,7 +38,7 @@ struct insurance
 	string insurance_name;
 };
 
-struct patient
+typedef struct patient
 {
 	int ID;
 	string name;
@@ -46,8 +46,8 @@ struct patient
 	char sex;
 	string birth;
 	string state;
-	int ID_insurance;
-};
+	string ID_insurance;
+} patient;
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
 bool createFiled(patient aux, int cont);

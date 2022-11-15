@@ -10,7 +10,12 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 	file.open(name, ios::in);	//abro el archivo para leerlo
 
 	if (!(file.is_open()))	//no se pudo abrir el archivo
+	{
 		return false;
+		cout << "no se abro";
+	}
+	else
+		cout << "abrio";
 
 	char coma;
 	patient aux;
@@ -21,7 +26,7 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 	while (file)
 	{
 		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.sex >> coma >> aux.birth >> coma >> aux.state >> coma >> aux.ID_insurance;
-		bool added = addPatient(list_patient, Npatient, aux);
+		bool added = addPatient(*&list_patient, Npatient, aux);
 		if (added == false)	//hubo algun error al agregar el paciente
 		{
 			return false;
@@ -41,7 +46,7 @@ bool addPatient(patient*& list_patient, int* Npatient, patient aux)
 	patient* changed = new patient[*Npatient];
 	int i=0;
 
-	while (i < *Npatient - 1 && *Npatient - 1 != 0)
+	while (i < *Npatient - 1 )
 	{
 		changed[i] = list_patient[i];
 		i++;
@@ -183,9 +188,6 @@ bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances)
 	if (!(file.is_open()))
 		return false;
 
-	int ID;
-	string insurance_name;
-
 	char coma;
 	insurance aux;
 	string dummy;
@@ -231,7 +233,7 @@ bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 	//busco el tiempo actual
 	time_t tiempoactual;
 	time(&tiempoactual);	//la funcion time me almacena el tiempoactual en segundos en la variable tiempoactual
-	time_t difference;
+	double difference;
 	while (i < *Npatient)
 	{
 		if (list_patient[i].state == "internado")	//mayor eficienia, no busco al pedo, si esá internado me voy del while
@@ -257,13 +259,21 @@ bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 					contfilled++;
 				}
 				else
-					int funcion;//llamar
+					while (j < *Ncontacts)
+					{
+						if (list_contacts[j].ID == list_patient[i].ID)
+						{
+							//int funcion;//llamar
+						}
+						j++;
+					}
 				
 			}
 				
 		}
 		i++;
 	}
+	return true;
 }
 time_t LastConsult(consults* list_consults, int Nconsults, patient aux,bool*asistencia)	//fncón para buscar la ultima ocnsulta
 {
@@ -325,4 +335,12 @@ bool createFiled(patient aux, int cont)
 		filled.close();
 		return true;
 	}
+}
+void llamar(contacts*& list_contats, int Ncontacts, patient*& list_patients, int Npatients)
+{
+	int option, decision;
+	bool finished=true;
+
+
+
 }
