@@ -6,7 +6,7 @@
 
 using namespace testing;
 
-	TEST(archivos, abrirlos) {
+TEST(archivos, abrirlos) {
 		bool abierto;
 		fstream prueba;
 		patient Pacprueba = {45,"valen","mao",'F',"07/06/2004","n/c","italiano"};

@@ -1,4 +1,6 @@
 #include "headers.h"
+#include <cstring>
+#include <string>
 
 
 bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion para leer el csv
@@ -17,11 +19,11 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 	else
 		cout << "abrio";
 
-	string coma;
+	
 	patient aux;
-	string dummy;
-
-	//file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;	//levanto los headers
+	string headers;
+	getline(file, headers);
+	
 
 	while (file)
 	{
