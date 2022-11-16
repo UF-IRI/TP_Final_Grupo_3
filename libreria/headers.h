@@ -5,24 +5,24 @@
 #include <iostream>
 #include <ctime>
 using namespace std;
-struct consults
+typedef struct 
 {
 	int ID;
 	string required;
 	string appointment;
 	bool attendance;
 	string doctors_ID;
-};
+}consults;
 
-struct contacts
+typedef struct 
 {
 	int ID;
 	string telephone;
 	string celphone;
 	string mail;
-};
+}contacts;
 
-struct doctor
+typedef struct 
 {
 	string ID;
 	string name;
@@ -30,15 +30,15 @@ struct doctor
 	string telephone;
 	string speciality;
 	bool state;
-};
+}doctor;
 
-struct insurance
+typedef struct 
 {
 	int ID;
 	string insurance_name;
-};
+}insurance;
 
-struct patient
+typedef struct 
 {
 	int ID;
 	string name;
@@ -47,7 +47,7 @@ struct patient
 	string birth;
 	string state;
 	int ID_insurance;
-};
+}patient;
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
 bool createFiled(patient aux, int cont);
