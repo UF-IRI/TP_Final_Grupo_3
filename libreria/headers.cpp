@@ -17,15 +17,16 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 	else
 		cout << "abrio";
 
-	char coma;
+	string coma;
 	patient aux;
 	string dummy;
 
-	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;	//levanto los headers
+	//file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;	//levanto los headers
 
 	while (file)
 	{
-		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.sex >> coma >> aux.birth >> coma >> aux.state >> coma >> aux.ID_insurance;
+		string coma1;
+		file >> aux.ID >> coma1 >> aux.name >> coma1 >> aux.surname >> coma1 >> aux.sex >> coma1 >> aux.birth >> coma1 >> aux.state >> coma1 >> aux.ID_insurance;
 		bool added = addPatient(*&list_patient, Npatient, aux);
 		if (added == false)	//hubo algun error al agregar el paciente
 		{
