@@ -38,7 +38,7 @@ typedef struct
 	string insurance_name;
 }insurance;
 
-typedef struct 
+typedef struct
 {
 	int ID;
 	string name;
@@ -48,6 +48,8 @@ typedef struct
 	string state;
 	int ID_insurance;
 }patient;
+
+
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
 bool createFiled(patient aux, int cont);
