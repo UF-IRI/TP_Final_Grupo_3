@@ -19,6 +19,7 @@ struct contacts
 	int ID;
 	string telephone;
 	string celphone;
+	string direccion;
 	string mail;
 };
 

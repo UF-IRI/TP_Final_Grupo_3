@@ -69,10 +69,10 @@ bool readContact(string name, contacts*& list_contacts, int* Ncontacts)
 	char coma;
 	contacts aux;
 	string dummy;
-	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
+	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy>>coma>>dummy;
 	while (file)
 	{
-		file >> aux.ID >> coma >> aux.telephone >> coma >> aux.celphone >> coma >> aux.mail;
+		file >> aux.ID >> coma >> aux.telephone >> coma >> aux.celphone >> coma >>aux.direccion>>coma>> aux.mail;
 		bool added = addContact(list_contacts, Ncontacts, aux);
 		if (added == false)
 			return false;
