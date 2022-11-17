@@ -27,8 +27,15 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 
 	while (file)
 	{
-		string coma1;
-		file >> aux.ID >> coma1 >> aux.name >> coma1 >> aux.surname >> coma1 >> aux.sex >> coma1 >> aux.birth >> coma1 >> aux.state >> coma1 >> aux.ID_insurance;
+		char coma1;
+		file >> aux.ID >> coma1;
+		getline(file, aux.name, ',');
+		getline(file, aux.surname, ',');
+		file >> aux.sex >> coma1;
+		getline(file, aux.birth, ',');
+		getline(file, aux.state, ',');
+		file >> aux.ID_insurance >> coma1;
+
 		bool added = addPatient(*&list_patient, Npatient, aux);
 		if (added == false)	//hubo algun error al agregar el paciente
 		{
@@ -250,9 +257,9 @@ bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 		else //va a entrar cuando el estado sea =n/c
 		{
 			bool asistencia;//para cuando busco la ultima consulta guardame aca si asistio o no
-			checkTime = LastConsult(list_consults, *Nconsults, list_patient[i],&asistencia);
+			checkTime = LastConsult(list_consults, *Nconsults, list_patient[i],&asistencia);//busca la ult consulta y me la devuelve como time_t
 			difference = difftime(tiempoactual, checkTime);
-			if (asistencia)
+			if (asistencia)//LastConsult me va a devolver en asistencia true si asistio, por lo que ouedo mirar otro pac
 				break;
 			else
 			{
