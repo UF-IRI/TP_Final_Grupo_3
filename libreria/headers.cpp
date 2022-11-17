@@ -183,7 +183,7 @@ bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances)
 	if (!(file.is_open()))
 		return false;
 
-	int ID=0;
+	int ID;
 	string insurance_name;
 
 	char coma;
