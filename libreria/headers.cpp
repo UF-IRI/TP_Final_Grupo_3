@@ -38,11 +38,7 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 
 		bool added = addPatient(*&list_patient, Npatient, aux);
 		if (added == false)	//hubo algun error al agregar el paciente
-		{
 			return false;
-			cout << "Error";
-		}
-			
 	}
 	file.close();
 	return true;
@@ -70,20 +66,32 @@ bool addPatient(patient*& list_patient, int* Npatient, patient aux)
 
 bool readContact(string name, contacts*& list_contacts, int* Ncontacts)
 {
-	if (list_contacts == nullptr || Ncontacts == nullptr)
+	if (list_contacts == nullptr)	//si no tengo memoria chau
 		return false;
-	fstream file;
-	file.open(name, ios::in);
+	
+	fstream file;	
+
+	file.open(name, ios::in);	//abro el archivo
+
 	if (!(file.is_open()))
 		return false;
-	char coma;
+
 	contacts aux;
-	string dummy;
-	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy>>coma>>dummy;
+	string headers;
+	
+
+	getline(file, headers);
 	while (file)
 	{
-		file >> aux.ID >> coma >> aux.telephone >> coma >> aux.celphone >> coma >>aux.direccion>>coma>> aux.mail;
+		char coma;
+		file >> aux.ID >> coma;
+		getline(file, aux.telephone,',');
+		getline(file, aux.celphone,',');
+		getline(file, aux.direccion,',');
+		getline(file,aux.mail,'\n');
+		
 		bool added = addContact(list_contacts, Ncontacts, aux);
+
 		if (added == false)
 			return false;
 	}
@@ -112,17 +120,25 @@ bool readConsults(string name, consults*& list_consults, int* Nconsults)
 {
 	if (list_consults == nullptr)
 		return false;
+
 	fstream file;
 	file.open(name, ios::in);
+
 	if (!(file.is_open()))
 		return false;
-	char coma;
+
 	consults aux;
-	string dummy;
-	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
+	string headers;
+	getline(file, headers);
 	while (file)
 	{
-		file >> aux.ID >> coma >> aux.required >> coma >> aux.appointment>> coma >> aux.attendance >> coma >> aux.doctors_ID;
+		char coma;
+		file >> aux.ID >> coma;
+		getline(file, aux.required, ',');
+		getline(file, aux.appointment, ',');
+		file>>aux.attendance>>coma;
+		getline(file, aux.doctors_ID, '\n');
+
 		bool added = addConsult(list_consults, Nconsults, aux);
 		if (added == false)
 			return false;
@@ -134,6 +150,7 @@ bool addConsult(consults*& list_consults, int* Nconsults, consults aux)
 {
 	if (list_consults == nullptr)
 		return false;
+
 	*Nconsults = *Nconsults + 1;
 	consults* changed = new consults[*Nconsults];
 	int i=0;
@@ -141,9 +158,9 @@ bool addConsult(consults*& list_consults, int* Nconsults, consults aux)
 	{
 		changed[i] = list_consults[i];
 		i++;
-	}
-		
+	}	
 	changed[i] = aux;
+
 	delete[]list_consults;
 	list_consults = changed;
 	return true;
@@ -159,11 +176,19 @@ bool readDoctor(string name, doctor*& list_doctors, int* Ndoctors)
 		return false;
 	char coma;
 	doctor aux;
-	string dummy; 
-	file >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy >> coma >> dummy;
+	string headers; 
+
+
+	getline(file, headers);
 	while (file)
 	{
-		file >> aux.ID >> coma >> aux.name >> coma >> aux.surname >> coma >> aux.telephone >> coma >> aux.speciality >> coma >> aux.state;;
+		file >> aux.ID >> coma;
+		getline(file, aux.name, ',');
+		getline(file, aux.surname, ',');
+		getline(file, aux.telephone, ',');
+		getline(file, aux.speciality, ',');
+		file >> aux.state;
+
 		bool added = addDoctor(list_doctors, Ndoctors, aux);
 		if (added == false)
 			return false;
@@ -230,13 +255,14 @@ bool addInsurance(insurance*& list_insurances, int* Ninsurances, insurance aux)
 	return true;
 }
 
-bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts)
+bool search(patient*& list_patient, int Npatient, consults*& list_consults, int Nconsults, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors)
 {
 	if (list_patient == nullptr || list_consults == nullptr || list_contacts == nullptr)
 		return false;
 	int i, j;
 	i = j = 0;
-	int contfilled = 0;
+	int contRecuperar;
+	int contfiled = 0;
 	//bool date;
 	int tenyears = 315576000;
 	time_t checkTime;
@@ -246,37 +272,28 @@ bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 	double difference;
 	while (i < *Npatient)
 	{
-		if (list_patient[i].state == "internado")	//mayor eficienia, no busco al pedo, si esá internado me voy del while
-			break;
-		else if (list_patient[i].state == "fallecido")
+		if (list_patient[i].state == "fallecido")
 		{
-			contfilled++;
-			bool filed = createFiled(list_patient[i], contfilled);
-
+			bool filed = createFiled(list_patient[i], contfiled);
+			contfiled++;
 		}
-		else //va a entrar cuando el estado sea =n/c
+		else if(list_patient[i].state =="n/c")//va a entrar cuando el estado sea =n/c
 		{
 			bool asistencia;//para cuando busco la ultima consulta guardame aca si asistio o no
 			checkTime = LastConsult(list_consults, *Nconsults, list_patient[i],&asistencia);//busca la ult consulta y me la devuelve como time_t
 			difference = difftime(tiempoactual, checkTime);
-			if (asistencia)//LastConsult me va a devolver en asistencia true si asistio, por lo que ouedo mirar otro pac
-				break;
-			else
+			if (!(asistencia))//LastConsult me va a devolver en asistencia true si asistio, por lo que ouedo mirar otro pac
 			{
 				if (difference > tenyears)	//si la diferencia entre la ultima consulta y el tiempo actual es mayor a 10 lo tengo que archivar
 				{
-					bool filedAgain = createFiled(list_patient[i], contfilled);
-					contfilled++;
+					bool filedAgain = createFiled(list_patient[i], contfiled);	//lo archivo directo
+					contfiled++;
 				}
 				else
-					while (j < *Ncontacts)
-					{
-						if (list_contacts[j].ID == list_patient[i].ID)
-						{
-							//int funcion;//llamar
-						}
-						j++;
-					}
+				{
+					bool recuperanding = archivosRecuperables(list_patient[i],list_contacts,Ncontacts,list_doctors,Ndoctors, contRecuperar);	//funciones secretaria
+					contRecuperar++;
+				}
 				
 			}
 				
@@ -285,6 +302,7 @@ bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int
 	}
 	return true;
 }
+
 time_t LastConsult(consults* list_consults, int Nconsults, patient aux,bool*asistencia)	//fncón para buscar la ultima ocnsulta
 {
 	if (Nconsults<=0|| list_consults == nullptr)
@@ -346,11 +364,31 @@ bool createFiled(patient aux, int cont)
 		return true;
 	}
 }
-void llamar(contacts*& list_contats, int Ncontacts, patient*& list_patients, int Npatients)
+bool archivosRecuperables(patient*&list_patient, contacts*&list_contacts, int Ncontacts, doctor*&list_doctors,int Ndoctors,int contRecuperar)
 {
-	int option, decision;
-	bool finished=true;
+	
+	fstream recuperables;
+	if (contRecuperar == 0)
+	{
+		recuperables.open("recuperables.csv", ios::out);
+		if (!(recuperables.is_open()))
+			return false;
+		recuperables << "dni, nombre, apellido, sexo, natalicio, estado, id_os";
+		recuperables << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		recuperables.close();
+		return true;
+	}
+	else
+	{
+		recuperables.open("recuperables.csv", ios::app);
+		if (!(recuperables.is_open()))
+			return false;
 
-
-
+		recuperables << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		recuperables.close();
+		return true;
+	}
 }
+
+
+
