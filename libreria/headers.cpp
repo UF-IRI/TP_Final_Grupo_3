@@ -364,7 +364,7 @@ bool createFiled(patient aux, int cont)
 		return true;
 	}
 }
-bool archivosRecuperables(patient*&list_patient, contacts*&list_contacts, int Ncontacts, doctor*&list_doctors,int Ndoctors,int contRecuperar)
+bool archivosRecuperables(patient aux, contacts*&list_contacts, int Ncontacts, doctor*&list_doctors,int Ndoctors,int contRecuperar)
 {
 	
 	fstream recuperables;
