@@ -169,7 +169,4 @@ TEST(archivos, abrirlos) {
 		time_t real = fromStringtoTimet(aux);
 		EXPECT_THAT(esperado, real);
 	}
-	TEST(ultimaConsul, unicaPrueb)
-	{
-		time_t LastConsult(consults * list_consults, int Nconsults, patient aux, bool* asistencia, string idmed);
-	}
+	

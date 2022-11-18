@@ -301,7 +301,7 @@ bool search(patient*& list_patient, int Npatient, consults*& list_consults, int 
 		i++;
 	}
 	return true;
-}
+}	//existe en el main
 
 time_t LastConsult(consults* list_consults, int Nconsults, patient aux, bool*asistencia, string*idmed)	//funcion para buscar la ultima ocnsulta, cuando desconozco el estado del paciente
 {
@@ -491,7 +491,7 @@ void secretaria(llamar aux, int *contFiled, patient* list_patient, int Np, insur
 	}
 
 
-}
+}	//existe en el main
 bool archivosRecuperado(llamar aux,int cont, string nombre_recu)	//me creo el archivo de recuperables
 {
 	fstream recuperables;
@@ -515,7 +515,7 @@ bool archivosRecuperado(llamar aux,int cont, string nombre_recu)	//me creo el ar
 		recuperables.close();
 		return true;
 	}
-}
+}	//existe en search y secretaria
 bool modify(llamar recuperable, int NOS, insurance* list_insurance)	//funcion para modificar la obra social
 {
 	if (list_insurance == nullptr)
@@ -533,5 +533,5 @@ bool modify(llamar recuperable, int NOS, insurance* list_insurance)	//funcion pa
 	}
 	return true;
 
-}
+}	//existe en secretaria
 
