@@ -4,6 +4,8 @@
 #include <cstring>
 #include <iostream>
 #include <ctime>
+#include <cstdlib>
+
 using namespace std;
 struct consults
 {
@@ -51,6 +53,7 @@ struct insurance
 };
  struct llamar
  {
+	 int id;
 	 string nombre;
 	 string apellido;
 	 string telefono;
@@ -65,10 +68,10 @@ struct insurance
 
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
-bool createFiled(patient aux, int cont);
+bool createFiled(patient aux, int cont, string filed_name);
 time_t fromStringtoTimet(string aux);
-time_t LastConsult(consults* list_consults, int Nconsults, patient aux, bool* asistencia);
-bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts, doctor*& list_doctors, int* Ndoctors);
+time_t LastConsult(consults* list_consults, int Nconsults, patient aux, bool* asistencia, string*idmed);
+bool search(patient*& list_patient, int Npatient, consults*& list_consults, int Nconsults, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors, string filed_name, string recuperados_nombre, int* contfiled);
 bool addInsurance(insurance*& list_insurances, int* Ninsurances, insurance aux);
 bool readInsurances(string name, insurance*& list_insurances, int* Ninsurances);
 bool addDoctor(doctor*& list_doctors, int* Ndoctors, doctor aux);
@@ -79,4 +82,8 @@ bool addContact(contacts*& list_contacts, int* Ncontacts, contacts aux);
 bool readContact(string name, contacts*& list_contacts, int* Ncontacts);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
 bool readpatient(string name, patient*& list_patient, int* Npatient);
-bool archivosRecuperables(patient*& list_patient, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors, int contRecuperar);
+bool archivosRecuperado(llamar aux, int cont, string nombre_recu);
+void secretaria(llamar aux, int* contFiled, patient* list_patient, int Np, insurance* list_insurances, int* cont, string nombre_recuperados, string filed_name, int NOS);
+bool modify(llamar recuperable, int NOS, insurance* list_insurance);
+bool leerSecretaria(string nombre_recuperados, llamar*& recuperados, int* Nrecuperados);
+bool addLlamar(llamar*& recuperados, int* Nrecuperados, llamar aux);

@@ -12,14 +12,8 @@ bool readpatient(string name, patient*& list_patient, int* Npatient)	//funcion p
 	file.open(name, ios::in);	//abro el archivo para leerlo
 
 	if (!(file.is_open()))	//no se pudo abrir el archivo
-	{
 		return false;
-		cout << "no se abro";
-	}
-	else
-		cout << "abrio";
 
-	
 	patient aux;
 	string headers;
 	getline(file, headers);
@@ -255,44 +249,50 @@ bool addInsurance(insurance*& list_insurances, int* Ninsurances, insurance aux)
 	return true;
 }
 
-bool search(patient*& list_patient, int Npatient, consults*& list_consults, int Nconsults, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors)
+bool search(patient*& list_patient, int Npatient, consults*& list_consults, int Nconsults, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors, string filed_name, string recuperados_nombre, int *contfiled)
 {
 	if (list_patient == nullptr || list_consults == nullptr || list_contacts == nullptr)
 		return false;
+
 	int i, j;
 	i = j = 0;
-	int contRecuperar;
-	int contfiled = 0;
-	//bool date;
-	int tenyears = 315576000;
-	time_t checkTime;
+	int contRecup=0;	//contador de pacientes recuperados
+	string idmed;	//para copiar de la ultima consulta
+	//contador de archivados
+	int tenyears = 315576000;	//para compara la diferencia
+	time_t checkTime;	//para chequear la diferencia
+	llamar recuperados; //estructura con los datos importantes que se le van a sar al archivo de la secretaria
 	//busco el tiempo actual
 	time_t tiempoactual;
 	time(&tiempoactual);	//la funcion time me almacena el tiempoactual en segundos en la variable tiempoactual
-	double difference;
-	while (i < *Npatient)
+	double difference;	//diferencia de tiempo
+
+	while (i < Npatient)	//recorro el paciente
 	{
-		if (list_patient[i].state == "fallecido")
+		if (list_patient[i].state == "fallecido")	//chequeo si está fallecido
 		{
-			bool filed = createFiled(list_patient[i], contfiled);
-			contfiled++;
+			bool filed = createFiled(list_patient[i], *contfiled, filed_name);	//llamo a la funcion para archivar
+			contfiled++;	//incremento el contador de archivados
 		}
-		else if(list_patient[i].state =="n/c")//va a entrar cuando el estado sea =n/c
+		else if(list_patient[i].state =="n/c")	//va a entrar cuando el estado sea =n/c
 		{
-			bool asistencia;//para cuando busco la ultima consulta guardame aca si asistio o no
-			checkTime = LastConsult(list_consults, *Nconsults, list_patient[i],&asistencia);//busca la ult consulta y me la devuelve como time_t
-			difference = difftime(tiempoactual, checkTime);
+			bool asistencia;	//para cuando busco la ultima consulta, me guardo aca si asistio o no
+
+			checkTime = LastConsult(list_consults, Nconsults, list_patient[i],&asistencia,&idmed);//busca la ult consulta y me la devuelve como time_t
+			difference = difftime(tiempoactual, checkTime);	//hago la diferencia entre el tiempo actual y la ultima consulta
+
 			if (!(asistencia))//LastConsult me va a devolver en asistencia true si asistio, por lo que ouedo mirar otro pac
 			{
 				if (difference > tenyears)	//si la diferencia entre la ultima consulta y el tiempo actual es mayor a 10 lo tengo que archivar
 				{
-					bool filedAgain = createFiled(list_patient[i], contfiled);	//lo archivo directo
+					bool filedAgain = createFiled(list_patient[i], *contfiled, filed_name);	//lo archivo directo
 					contfiled++;
 				}
 				else
 				{
-					bool recuperanding = archivosRecuperables(list_patient[i],list_contacts,Ncontacts,list_doctors,Ndoctors, contRecuperar);	//funciones secretaria
-					contRecuperar++;
+					llenarLlamar(&recuperados, list_patient[i], list_contacts, Ncontacts, list_doctors,Ndoctors, idmed);	//me crea la estructura
+					bool recuperando = archivosRecuperado(recuperados, contRecup, recuperados_nombre);	//si asistio y pasaron menos de 10 años, lo paso al archivo de recuperados
+					contRecup++;
 				}
 				
 			}
@@ -303,31 +303,34 @@ bool search(patient*& list_patient, int Npatient, consults*& list_consults, int 
 	return true;
 }
 
-time_t LastConsult(consults* list_consults, int Nconsults, patient aux,bool*asistencia)	//fncón para buscar la ultima ocnsulta
+time_t LastConsult(consults* list_consults, int Nconsults, patient aux, bool*asistencia, string*idmed)	//funcion para buscar la ultima ocnsulta, cuando desconozco el estado del paciente
 {
-	if (Nconsults<=0|| list_consults == nullptr)
+	if (Nconsults==0|| list_consults == nullptr)	//si no tengo espacio de memoria ni consultas
 		return NULL;
+	
 	int j = 0;
 	int cont = 0;
 	time_t ultima=0;
 	time_t auxConsult;
+
 	while (j < Nconsults) //para buscar la ultima consulta para dsp poder comparar si pasaron 10 años
 	{
 		if (aux.ID == list_consults[j].ID)//comparo las consultas que coinciden con mi pac
 		{	
-			auxConsult = fromStringtoTimet(list_consults[j].appointment);
+			auxConsult = fromStringtoTimet(list_consults[j].appointment);	//cambio a timet
 			if (auxConsult > ultima || cont == 0)// busco la ultima consulta
 			{
-				ultima = auxConsult;//cambio el valor de ultima consulta
-				*asistencia = list_consults[j].attendance;
+				*idmed = list_consults[j].doctors_ID;	//lo necesito para completar la esctructura llamar
+				ultima = auxConsult;	//cambio el valor de ultima consulta
+				*asistencia = list_consults[j].attendance;	//para mandarle a search si asistio o no a la ultima consulta que acabamo de clacular
 			}
 			cont++;
 		}
 
 		j++;
 	}
-	return ultima; 
-}
+	return ultima; //devuelvo la ultima consulta
+}	//existe en search
 
 time_t fromStringtoTimet(string aux)	//funcion para cambiar mi fecha string a un time t
 {
@@ -338,57 +341,197 @@ time_t fromStringtoTimet(string aux)	//funcion para cambiar mi fecha string a un
 	auxiliar.tm_year = stoi(aux.substr(6, 9)) - 1900;
 	devuelvo = mktime(&auxiliar);
 	return devuelvo;
-}
+}	//existe en search
 
-bool createFiled(patient aux, int cont)
+bool createFiled(patient aux, int cont, string filed_name)	//lleno el archivo de archivados
 {
-	fstream filled;
-	if (cont == 0)
+	fstream filed;
+	if (cont == 0)	//si el archivo esta vacio/no existe
 	{
-		filled.open("filled.csv", ios::out);
-		if (!(filled.is_open()))
+		filed.open(filed_name, ios::out);
+		if (!(filed.is_open()))
 			return false;
-		filled << "dni, nombre, apellido, sexo, natalicio, estado, id_os";
-		filled << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
-		filled.close();
+		filed << "dni, nombre, apellido, sexo, natalicio, estado, id_os";
+		filed << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		filed.close();
 		return true;
 	}
 	else
 	{
-		filled.open("filled.csv", ios::app);
-		if (!(filled.is_open()))
+		//hago append para agregar si ya hay pacientes archivados
+		filed.open(filed_name, ios::app);
+		if (!(filed.is_open()))
 			return false;
 		
-		filled << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
-		filled.close();
+		filed << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		filed.close();
 		return true;
 	}
-}
-bool archivosRecuperables(patient aux, contacts*&list_contacts, int Ncontacts, doctor*&list_doctors,int Ndoctors,int contRecuperar)
-{
-	
-	fstream recuperables;
-	if (contRecuperar == 0)
+}	//existe en search
+
+void llenarLlamar(llamar* recup, patient paciente, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors, string idmed)
+{	//aca llenams el struct llamar que es con el que llenamos el archivo para secretaria
+	llamar datosImp;
+	datosImp.nombre = paciente.name;
+	datosImp.apellido = paciente.surname;
+	datosImp.obraSoc = paciente.ID_insurance;
+	datosImp.ID_med = idmed;
+	int i = 0;
+	while (i < Ndoctors)	//para copiar los datos del doctor
 	{
-		recuperables.open("recuperables.csv", ios::out);
+		if (list_doctors[i].ID == idmed)
+		{
+			datosImp.nombreMed = list_doctors[i].name;
+			datosImp.apellidoMed = list_doctors[i].surname;
+			datosImp.especialidad = list_doctors[i].speciality;
+			datosImp.telefonoMed = list_doctors[i].telephone;
+			datosImp.activo = list_doctors[i].state;
+
+		}
+		i++;
+	}
+	i = 0;
+	while (i < Ncontacts)	//para copiar el telefono
+	{
+		if (list_contacts[i].ID == paciente.ID)
+			datosImp.telefono = list_contacts[i].telephone;
+		i++;
+	}
+}	//existe en search y secretaria
+
+bool leerSecretaria(string nombre_recuperados, llamar*& recuperados, int* Nrecuperados)	//que llenamos en buscar, son recuperables dudoso
+{	//leo el archivo de recuprados y armo un listado
+	fstream archi;
+	archi.open(nombre_recuperados, ios::in);
+	if (!(archi.is_open()))
+		return false;
+	string header;
+	char coma;
+	getline(archi, header);
+	llamar aux;
+
+	while (archi)
+	{
+		archi >> aux.id >> coma;
+		getline(archi, aux.nombre, ',');
+		getline(archi, aux.apellido, ',');
+		getline(archi, aux.telefono, ',');
+		getline(archi, aux.ID_med, ',');
+		getline(archi, aux.nombreMed, ',');
+		getline(archi, aux.apellidoMed, ',');
+		getline(archi, aux.telefonoMed, ',');
+		getline(archi, aux.especialidad, ',');
+		archi >> aux.activo >> coma;	//creemos que los booll son un problema
+		getline(archi, recuperados->obraSoc, '\n');
+
+		bool added = addLlamar(*&recuperados, Nrecuperados, aux);
+		if (added == false)	//hubo algun error al agregar el paciente
+			return false;
+	}
+	archi.close();
+	return true;
+
+}	//lo invoco en main
+bool addLlamar(llamar*& recuperados, int* Nrecuperados, llamar aux)	//funcion que agrega "llamar"
+{
+	if (recuperados == nullptr)
+		return false;
+	*Nrecuperados = *Nrecuperados + 1;
+	llamar* changed = new llamar[*Nrecuperados];
+	int i = 0;
+	while (i < *Nrecuperados - 1 && *Nrecuperados - 1 != 0)
+	{
+		changed[i] = recuperados[i];
+		i++;
+	}
+	changed[i] = aux;
+	delete[]recuperados;
+	recuperados = changed;
+	return true;
+}
+void secretaria(llamar aux, int *contFiled, patient* list_patient, int Np, insurance* list_insurances, int* cont, string nombre_recuperados, string filed_name, int NOS)	//le paso un llamar y me fijo si lo archivo o lo recpero oficialmente
+{//le cae un llamar y va a ir oficialmente al archivo de recuperables si  vivo=1 y vuelve=1
+	srand(time(0));	//inicializo rand
+	int N = 0;//cant de pacientes recuperados
+	int i = 0;	//0 false, 1 true
+	while (Np)
+	{
+		int atendio = rand() % 2;	//valores entre 0 y 1;
+		if (atendio == 1)
+		{
+			int vivo_muerto = rand() % 2;
+			if (vivo_muerto == 0)	//si esta muerto lo archivo
+			{
+				bool archi = createFiled(list_patient[i], *contFiled, filed_name);
+				list_patient[i].state = "fallecido";	//le cambio el estado en la lista
+				*contFiled = *contFiled + 1;
+			}
+			else
+			{
+				int vuelve = rand() % 2;	//random para determinar si vuelve o no
+				if (vuelve == 0)	//no va a volver, lo archivo
+				{
+					bool filed= createFiled(list_patient[i], *contFiled,filed_name);	//tambien lo archivo
+					*contFiled = *contFiled + 1;
+				}
+				else // va oficialmente al archivo de recuperables
+				{
+
+					int modifico = rand() % 2;
+					if(modifico==0)	//modifico
+					{
+						bool modificar = modify(aux, NOS, list_insurances);
+					}
+					bool recuperar = archivosRecuperado(aux, *N, nombre_recuperados);
+					N++;
+				}
+			}
+		}
+		i++;
+	}
+
+
+}
+bool archivosRecuperado(llamar aux,int cont, string nombre_recu)	//me creo el archivo de recuperables
+{
+	fstream recuperables;
+	if (cont == 0)
+	{
+		recuperables.open(nombre_recu, ios::out);
 		if (!(recuperables.is_open()))
 			return false;
-		recuperables << "dni, nombre, apellido, sexo, natalicio, estado, id_os";
-		recuperables << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		recuperables << "nombre,apellido,telefono,idmedico,nombreMedico,apellidoMedico,telefonoMedico,especialidadMedico,actividadMedico,ObraSocialPac";
+		recuperables << aux.nombre << "," << aux.apellido << "," << aux.telefono << "," << aux.ID_med << "," << aux.nombreMed << "," << aux.apellidoMed << "," << aux.telefonoMed << "," << aux.especialidad << "," << aux.activo<<","<<aux.obraSoc;
 		recuperables.close();
 		return true;
 	}
 	else
 	{
-		recuperables.open("recuperables.csv", ios::app);
+		recuperables.open(nombre_recu, ios::app);
 		if (!(recuperables.is_open()))
 			return false;
 
-		recuperables << aux.ID << "," << aux.name << "," << aux.surname << "," << aux.sex << "," << aux.birth << "," << aux.state << "," << aux.ID_insurance;
+		recuperables << aux.nombre << "," << aux.apellido << "," << aux.telefono << "," << aux.ID_med << "," << aux.nombreMed << "," << aux.apellidoMed << "," << aux.telefonoMed << "," << aux.especialidad << "," << aux.activo << "," << aux.obraSoc;
 		recuperables.close();
 		return true;
 	}
 }
+bool modify(llamar recuperable, int NOS, insurance* list_insurance)	//funcion para modificar la obra social
+{
+	if (list_insurance == nullptr)
+		return false;
+	srand(time(0));	//inicializo el rand
+	int newOS = rand() % 6 + 1;	//genero numeros enetre 1 y 6 para compararlo con el listado de obras sociales  y meterselo a recuperable
+	int i = 0;
+	while (i < NOS)
+	{
+		if (newOS == list_insurance[i].ID)
+		{
+			recuperable.obraSoc = list_insurance[i].ID;
+		}
+		i++;
+	}
+	return true;
 
-
+}
 
