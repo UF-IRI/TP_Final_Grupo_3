@@ -83,7 +83,7 @@ bool readContact(string name, contacts*& list_contacts, int* Ncontacts);
 bool addPatient(patient*& list_patient, int* Npatient, patient aux);
 bool readpatient(string name, patient*& list_patient, int* Npatient);
 bool archivosRecuperado(llamar aux, int cont, string nombre_recu);
-void secretaria(llamar aux, int* contFiled, patient* list_patient, int Np, insurance* list_insurances, int* cont, string nombre_recuperados, string filed_name, int NOS);
+void secretaria(llamar aux, int* contFiled, patient* list_patient, int Np, insurance* list_insurances, string nombre_recuperados, string filed_name, int NOS);
 bool modify(llamar recuperable, int NOS, insurance* list_insurance);
 bool leerSecretaria(string nombre_recuperados, llamar*& recuperados, int* Nrecuperados);
 bool addLlamar(llamar*& recuperados, int* Nrecuperados, llamar aux);
