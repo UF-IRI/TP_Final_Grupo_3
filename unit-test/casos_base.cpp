@@ -96,7 +96,7 @@ TEST(archivos, abrirlos) {
 			int Ninsurances = 0;
 			insurance* list_insurances = new insurance[Ninsurances];
 			bool test = readInsurances("archivoprueba.csv", *&list_insurances, &Ninsurances);
-			ASSERT_THAT(Ninsurances, 1);
+			EXPECT_THAT(Ninsurances, 1);
 			EXPECT_TRUE(test);
 			EXPECT_THAT(list_insurances[0].ID, Insuranceprueba.ID);
 		}
@@ -120,14 +120,14 @@ TEST(archivos, abrirlos) {
 			int Ndoctors = 0;
 			doctor* list_doctors = new doctor[Ndoctors];
 			bool test = readDoctor("archivoprueba.csv", *&list_doctors, &Ndoctors);
-			ASSERT_THAT(Ndoctors, 1);
+			EXPECT_THAT(Ndoctors, 1);
 			EXPECT_TRUE(test);
 			EXPECT_THAT(list_doctors[0].ID, Doctorprueba.ID);
 		}
 		EXPECT_TRUE(abierto);
 	}
-	//bool search(patient*& list_patient, int* Npatient, consults*& list_consults, int* Nconsults, contacts*& list_contacts, int* Ncontacts)
 	
+	/*
 	TEST(search, noConincidence)
 	{
 		int Np = 2;
@@ -140,25 +140,23 @@ TEST(archivos, abrirlos) {
 		list_consults[1] = { 45,"28/09/2015","28/09/2016",true,"218976" };
 		list_consults[2] = { 73,"28/09/2014","28/09/2015",false,"218976" };
 		list_consults[3] = { 73,"28/09/2015","28/09/2016",true,"218976" };
-		int Ncons = 3;
-		contacts* list_contacts = new contacts[Ncons];
+		int Ncont = 3;
+		contacts* list_contacts = new contacts[Ncont];
 		int ID;
 		list_contacts[0] = { 47586,"02304666144","+5491122832779","vuelta de obligado 875","lupehelou@gmail.com" };
 		list_contacts[1] = { 98765,"6482945659","+5491112345678","av santa fe 4576","glopez@gmail.com" };
 		list_contacts[2] = { 45678,"02846892","+5491198765432","jose hernandez 3412","dperez@gmail.com" };
-
-		bool check = search(list_patient, &Np, list_consults, &Nc, list_contacts, &Nc);
-
-
-
-		int ID;
-		string required;
-		string appointment;
-		bool attendance;
-		string doctors_ID;
+		int Nd = 2;
+		doctor* list_docs = new doctor[Nd];
+		list_contacts[0] = { 47586,"02304666144","+5491122832779","vuelta de obligado 875","lupehelou@gmail.com" };
+		list_contacts[1] = { 98765,"6482945659","+5491112345678","av santa fe 4576","glopez@gmail.com" };
+		bool check = search(*&list_patient,  Np, *& list_consults,  Nc, *& list_contacts, Ncont, *& list_docs, Nd, nameArch, nameRecup)
 
 
-	}
+
+		
+
+	}*/
 
 	TEST(fromStringToTimet, coincide)
 	{
@@ -170,4 +168,8 @@ TEST(archivos, abrirlos) {
 		time_t esperado= mktime(&auxiliar);
 		time_t real = fromStringtoTimet(aux);
 		EXPECT_THAT(esperado, real);
+	}
+	TEST(ultimaConsul, unicaPrueb)
+	{
+		time_t LastConsult(consults*list_consults,int Nconsults,patient aux, bool*asistencia, string idmed)
 	}

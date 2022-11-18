@@ -33,8 +33,29 @@ int main()
 	int Nos = 0;
 	insurance* list_insurance = new insurance[Nos];
 	bool checkInsurance = readInsurances(insurancePath, list_insurance, &Nos);
-	
 
+	string nameArch, nameRecup;
+	nameArch = "archivados.csv";
+	nameRecup = "recuperados.csv";
+	int i = 0;
+	int contFiled=0;
+	
+	bool busqueda=search(* &list_patient, Npatient,  * &list_consults, Nconsults,  * &list_contacts, Ncontacts, *&list_docs, Ndoctors, nameArch,nameRecup,&contFiled);
+	if (busqueda)
+	{
+		int Nrecup = 0;
+		llamar paciente;
+		llamar* recuperados = new llamar[Nrecup];
+		bool checkSec = leerSecretaria(nameRecup, recuperados, &Nrecup);
+		for (i = 0; i < Nrecup;i++)
+		{
+			paciente = recuperados[i];
+			secretaria(paciente,&contFiled, list_patient, Npatient,list_insurance, nameArch, nameRecup,Nos);
+		}
+		delete[]recuperados;
+	}
+
+	
 	delete[]list_patient;
 	delete[]list_consults;
 	delete[]list_contacts;
@@ -43,5 +64,7 @@ int main()
 	return 0;
 	
 }
+
+
 
 

@@ -449,7 +449,7 @@ bool addLlamar(llamar*& recuperados, int* Nrecuperados, llamar aux)	//funcion qu
 	recuperados = changed;
 	return true;
 }
-void secretaria(llamar aux, int *contFiled, patient* list_patient, int Np, insurance* list_insurances, int* cont, string nombre_recuperados, string filed_name, int NOS)	//le paso un llamar y me fijo si lo archivo o lo recpero oficialmente
+void secretaria(llamar aux, int *contFiled, patient* list_patient, int Np, insurance* list_insurances, string nombre_recuperados, string filed_name, int NOS)	//le paso un llamar y me fijo si lo archivo o lo recpero oficialmente
 {//le cae un llamar y va a ir oficialmente al archivo de recuperables si  vivo=1 y vuelve=1
 	srand(time(0));	//inicializo rand
 	int N = 0;//cant de pacientes recuperados
@@ -482,7 +482,7 @@ void secretaria(llamar aux, int *contFiled, patient* list_patient, int Np, insur
 					{
 						bool modificar = modify(aux, NOS, list_insurances);
 					}
-					bool recuperar = archivosRecuperado(aux, *N, nombre_recuperados);
+					bool recuperar = archivosRecuperado(aux, N, nombre_recuperados);
 					N++;
 				}
 			}
