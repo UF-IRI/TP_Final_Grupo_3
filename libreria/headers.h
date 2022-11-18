@@ -87,3 +87,4 @@ void secretaria(llamar aux, int* contFiled, patient* list_patient, int Np, insur
 bool modify(llamar recuperable, int NOS, insurance* list_insurance);
 bool leerSecretaria(string nombre_recuperados, llamar*& recuperados, int* Nrecuperados);
 bool addLlamar(llamar*& recuperados, int* Nrecuperados, llamar aux);
+void llenarLlamar(llamar* recup, patient paciente, contacts*& list_contacts, int Ncontacts, doctor*& list_doctors, int Ndoctors, string idmed);

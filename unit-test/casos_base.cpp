@@ -171,5 +171,5 @@ TEST(archivos, abrirlos) {
 	}
 	TEST(ultimaConsul, unicaPrueb)
 	{
-		time_t LastConsult(consults*list_consults,int Nconsults,patient aux, bool*asistencia, string idmed)
+		time_t LastConsult(consults * list_consults, int Nconsults, patient aux, bool* asistencia, string idmed);
 	}
